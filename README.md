@@ -3,7 +3,7 @@
 
 # altamiranoi
 A repository collector.  
-altamiranoi is a CLI that sorts repository URLs according to their main programming language.
+altamiranoi is a CLI that collects repositories from forge users.
 
 ### Table of Contents
 - [Introduction](#introduction)
@@ -17,7 +17,7 @@ altamiranoi is a CLI that sorts repository URLs according to their main programm
 > You should expect major changes in functionality as the codebase stabilizes.  
 
 The purpose of this project is to make my hobby, that being to collect and classify repositories according to their main programming language, a little bit easier.  
-My dream scenario is that some day I can hook altamiranoi to [Emacs](https://www.gnu.org/software/emacs/) and, with one function, sort each repository link inside an [org-mode](https://orgmode.org/) headline.  
+This project was born from the necessity of automatizing how I collect URLs from forges; this should be accomplished by using a forge's API to collect user's repositories, either their own and/or the ones they have starred.
 
 ## Contributions
 Issues, pull requests, and forks are welcome.
