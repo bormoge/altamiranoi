@@ -811,14 +811,12 @@ class AltamiranoiMain:
         config_file: str = altamiranoi_default_args_object.config_file,
         # File that contains the environment variables.
         env_file: str = altamiranoi_default_args_object.env_file,
-        # File that contains the repository urls.
-        repository_url_file: str = altamiranoi_default_args_object.repository_url_file,
+        # File that contains the user urls.
+        user_url_file: str = altamiranoi_default_args_object.user_url_file,
         # File that contains the filtered urls.
         filtered_urls_file: str = altamiranoi_default_args_object.filtered_urls_file,
-        # Directory with all the repository URLs already sorted.
-        sorted_repositories_directory: str = altamiranoi_default_args_object.sorted_repositories_directory,
-        # File extension for files generated inside sorted_repositories_directory.
-        file_extension: str = altamiranoi_default_args_object.file_extension,
+        # File that contains the repository urls output.
+        repository_url_file: str = altamiranoi_default_args_object.repository_url_file,
         # Seconds to wait until the next API call.
         sleep_time: float = altamiranoi_default_args_object.sleep_time,
         # Verbose modes.

@@ -36,9 +36,9 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--repository-url-file",
-        default=altamiranoi_default_args_object.repository_url_file,
-        help="Path to the file that contains the repository URLs file.",
+        "--user-url-file",
+        default=altamiranoi_default_args_object.user_url_file,
+        help="Path to the file that contains the user URLs.",
     )
 
     parser.add_argument(
@@ -48,15 +48,9 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--sorted-repositories-directory",
-        default=altamiranoi_default_args_object.sorted_repositories_directory,
-        help="Path to the directory where the URLs will be stored.",
-    )
-
-    parser.add_argument(
-        "--file-extension",
-        default=altamiranoi_default_args_object.file_extension,
-        help="File extension for files generated inside sorted_repositories_directory.",
+        "--repository-url-file",
+        default=altamiranoi_default_args_object.repository_url_file,
+        help="Path to the output file that contains the repository URLs.",
     )
 
     parser.add_argument(
@@ -98,20 +92,18 @@ def main() -> None:
     arg_urls: str = get_all_urls_from_pipes_and_urls_arg(args)
 
     try:
-        sid: AltamiranoiMain = AltamiranoiMain()
-        sid.altamiranoi(
+        altamiranoi: AltamiranoiMain = AltamiranoiMain()
+        altamiranoi.altamiranoi(
             # File that contains the configuration values.
             config_file=args.config_file,
             # File that contains the environment variables.
             env_file=args.env_file,
-            # File that contains the repository urls.
-            repository_url_file=args.repository_url_file,
+            # File that contains the user urls.
+            user_url_file=args.user_url_file,
             # File that contains the filtered urls.
             filtered_urls_file=args.filtered_urls_file,
-            # Directory with all the repository URLs already sorted.
-            sorted_repositories_directory=args.sorted_repositories_directory,
-            # File extension for files generated inside sorted_repositories_directory.
-            file_extension=args.file_extension,
+            # File that contains the repository urls output.
+            repository_url_file=args.repository_url_file,
             # Seconds to wait until the next API call.
             sleep_time=args.sleep_time,
             # Verbose modes.
@@ -119,7 +111,8 @@ def main() -> None:
             # String that contains URLs passed by the user as
             # a positional argument and/or pipe output.
             arg_urls=arg_urls,
-            # Check for the reset date of rate limits at the start of altamiranoi. If a rate limit reset date is found and it hasn't happened yet, stop altamiranoi.
+            # Check for the reset date of rate limits at the start of altamiranoi.
+            # If a rate limit reset date is found and it hasn't happened yet, stop altamiranoi.
             check_at_start_for_rate_limits=args.check_at_start_for_rate_limits,
         )
 

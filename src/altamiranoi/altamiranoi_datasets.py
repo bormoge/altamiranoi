@@ -30,20 +30,18 @@ class AltamiranoiDefaultArgs:
     )
     # File that contains the environment variables.
     env_file: str = f"{altamiranoi_xdg_object.ALTAMIRANOI_CONFIG_HOME_DIR}/.env"
-    # File that contains the repository urls.
-    repository_url_file: str = (
-        f"{altamiranoi_xdg_object.ALTAMIRANOI_DATA_HOME_DIR}/repository_urls.org"
+    # File that contains the user urls.
+    user_url_file: str = (
+        f"{altamiranoi_xdg_object.ALTAMIRANOI_DATA_HOME_DIR}/user_urls.org"
     )
     # File that contains the filtered urls.
     filtered_urls_file: str = (
         f"{altamiranoi_xdg_object.ALTAMIRANOI_CONFIG_HOME_DIR}/filtered_urls.org"
     )
-    # Directory with all the repository URLs already sorted.
-    sorted_repositories_directory: str = (
-        f"{altamiranoi_xdg_object.ALTAMIRANOI_DATA_HOME_DIR}/sorted_repositories/"
+    # File that contains the repository urls output.
+    repository_url_file: str = (
+        f"{altamiranoi_xdg_object.ALTAMIRANOI_DATA_HOME_DIR}/repository_urls.org"
     )
-    # File extension for files generated inside sorted_repositories_directory.
-    file_extension: str = "org"
     # Seconds to wait until the next API call.
     sleep_time: float = 2.0
     # Verbose modes.
@@ -51,7 +49,8 @@ class AltamiranoiDefaultArgs:
     # String that contains URLs passed by the user as
     # a positional argument and/or pipe output.
     arg_urls: str = ""
-    # Check for the reset date of rate limits at the start of altamiranoi. If a rate limit reset date is found and it hasn't happened yet, stop altamiranoi.
+    # Check for the reset date of rate limits at the start of altamiranoi.
+    # If a rate limit reset date is found and it hasn't happened yet, stop altamiranoi.
     check_at_start_for_rate_limits: bool = False
 
 
