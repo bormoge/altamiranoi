@@ -10,7 +10,7 @@ from typing import Any, cast
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 
-from .altamiranoi_datasets import (
+from .altamiranoi_dataclasses import (
     altamiranoi_default_args_object,
     altamiranoi_xdg_object,
 )
@@ -27,10 +27,9 @@ class AltamiranoiMainArgs:
     """
 
     env_file: str
-    repository_url_file: str
+    user_url_file: str
     filtered_urls_file: str
-    sorted_repositories_directory: str
-    file_extension: str
+    repository_url_file: str
     sleep_time: float
     verbose: int
     arg_urls: str
@@ -322,11 +321,11 @@ class AltamiranoiMain:
             )
 
         if (
-            args_list["repository_url_file"]
-            == altamiranoi_default_args_object.repository_url_file
+            args_list["user_url_file"]
+            == altamiranoi_default_args_object.user_url_file
         ):
-            args_list["repository_url_file"] = os.path.expanduser(
-                config_dict.get("repository_url_file", args_list["repository_url_file"])
+            args_list["user_url_file"] = os.path.expanduser(
+                config_dict.get("user_url_file", args_list["user_url_file"])
             )
 
         if (
@@ -338,22 +337,11 @@ class AltamiranoiMain:
             )
 
         if (
-            args_list["sorted_repositories_directory"]
-            == altamiranoi_default_args_object.sorted_repositories_directory
+            args_list["repository_url_file"]
+            == altamiranoi_default_args_object.repository_url_file
         ):
-            args_list["sorted_repositories_directory"] = os.path.expanduser(
-                config_dict.get(
-                    "sorted_repositories_directory",
-                    args_list["sorted_repositories_directory"],
-                )
-            )
-
-        if (
-            args_list["file_extension"]
-            == altamiranoi_default_args_object.file_extension
-        ):
-            args_list["file_extension"] = config_dict.get(
-                "file_extension", args_list["file_extension"]
+            args_list["repository_url_file"] = os.path.expanduser(
+                config_dict.get("repository_url_file", args_list["repository_url_file"])
             )
 
         args_list["sleep_time"] = self.check_if_number(args_list["sleep_time"])
@@ -384,10 +372,9 @@ class AltamiranoiMain:
 
         return AltamiranoiMainArgs(
             args_list["env_file"],
-            args_list["repository_url_file"],
+            args_list["user_url_file"],
             args_list["filtered_urls_file"],
-            args_list["sorted_repositories_directory"],
-            args_list["file_extension"],
+            args_list["repository_url_file"],
             args_list["sleep_time"],
             args_list["verbose"],
             args_list["arg_urls"],
@@ -836,10 +823,9 @@ class AltamiranoiMain:
         args_list: dict = {
             "config_file": config_file,
             "env_file": env_file,
-            "repository_url_file": repository_url_file,
+            "user_url_file": user_url_file,
             "filtered_urls_file": filtered_urls_file,
-            "sorted_repositories_directory": sorted_repositories_directory,
-            "file_extension": file_extension,
+            "repository_url_file": repository_url_file,
             "sleep_time": sleep_time,
             "verbose": verbose,
             "arg_urls": arg_urls,
@@ -855,10 +841,10 @@ class AltamiranoiMain:
                 altamiranoi_xdg_object.ALTAMIRANOI_DATA_HOME_DIR,
                 altamiranoi_xdg_object.ALTAMIRANOI_CONFIG_HOME_DIR,
                 altamiranoi_xdg_object.ALTAMIRANOI_CACHE_HOME_DIR,
-                sid_args.sorted_repositories_directory,
             ],
             "files": [
                 sid_args.env_file,
+                sid_args.user_url_file,
                 sid_args.repository_url_file,
                 sid_args.filtered_urls_file,
             ],

@@ -4,7 +4,7 @@ import sys
 import time
 from typing import cast
 
-from .altamiranoi_datasets import altamiranoi_default_args_object
+from .altamiranoi_dataclasses import altamiranoi_default_args_object
 from .altamiranoi_main import AltamiranoiMain
 
 
