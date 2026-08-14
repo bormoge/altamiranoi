@@ -105,22 +105,22 @@ class AltamiranoiMain:
         except OSError as e:
             sys.exit(f"Error reading {env_file}: {e}")
 
-    def read_repository_url_file(self, repository_url_file: str) -> list[str]:
+    def read_user_url_file(self, user_url_file: str) -> list[str]:
         """
-        Read the URLs inside repository_url_file.
+        Read the URLs inside user_url_file.
         """
 
         try:
-            with open(repository_url_file, "r") as file:
+            with open(user_url_file, "r") as file:
                 urls: list[str] = [line.strip() for line in file if line.strip()]
 
         except PermissionError as p:
             sys.exit(
-                f"You do not have the necessary permissions to read {repository_url_file}: {p}"
+                f"You do not have the necessary permissions to read {user_url_file}: {p}"
             )
 
         except OSError as e:
-            sys.exit(f"Error reading {repository_url_file}: {e}")
+            sys.exit(f"Error reading {user_url_file}: {e}")
 
         return urls
 
@@ -381,26 +381,26 @@ class AltamiranoiMain:
             args_list["check_at_start_for_rate_limits"],
         )
 
-    def add_pipe_urls(self, repository_urls: list[str], arg_urls: str) -> list[str]:
+    def add_pipe_urls(self, user_urls: list[str], arg_urls: str) -> list[str]:
         """
         Split the URLs found in arg_urls by newline and add them to repository_urls.
         """
 
         # Add any URLs found in the pipe to the repository_urls
         if not arg_urls == "":
-            repository_urls: list[str] = repository_urls + arg_urls.split("\n")
+            user_urls: list[str] = user_urls + arg_urls.split("\n")
 
-        return repository_urls
+        return user_urls
 
-    def remove_duplicate_urls(self, repository_urls: list[str]) -> list[str]:
+    def remove_duplicate_urls(self, user_urls: list[str]) -> list[str]:
         """
-        Remove the duplicate URLs found in repository_urls.
+        Remove the duplicate URLs found in user_urls.
         """
 
-        return list(dict.fromkeys(repository_urls))
+        return list(dict.fromkeys(user_urls))
 
     def filter_repository_urls(
-        self, repository_urls: list[str], filtered_urls: list[str]
+        self, user_urls: list[str], filtered_urls: list[str]
     ) -> list[str]:
         """
         Remove any URLs that contain a substring in the filtered_urls list.
@@ -411,53 +411,53 @@ class AltamiranoiMain:
 
         # Check if filter list is empty. If it is, that means there are no filters.
         if len(filtered_urls) == 0:
-            return repository_urls
+            return user_urls
 
         modified_repository_urls: list[str] = [
             # Put the url in modified_repository_urls...
             url
-            for url in repository_urls
+            for url in user_urls
             # ...if the url doesn't contain any filtered URL/keyword in it.
             if not any(filtered_url in url for filtered_url in filtered_urls)
         ]
 
         return modified_repository_urls
 
-    def normalize_url(self, repository_url: str) -> str:
+    def normalize_url(self, user_url: str) -> str:
         """
-        Return the provided URL after doing some basic normalizing.
+        Return the provided URL after doing some basic normalization.
         """
 
         # Each AltamiranoiForge instance should do its
         # own normalization; the main purpose of this function
         # is to avoid crashes related to URL names.
 
-        repository_url: str = repository_url.split("?")[0]
-        repository_url: str = repository_url.split("#")[0]
-        repository_url: str = repository_url.removesuffix("/")
-        repository_url: str = repository_url.removesuffix(".git")
+        user_url: str = user_url.split("?")[0]
+        user_url: str = user_url.split("#")[0]
+        user_url: str = user_url.removesuffix("/")
+        user_url: str = user_url.removesuffix(".git")
 
-        return repository_url
+        return user_url
 
-    def normalize_repository_urls(
-        self, repository_urls: list[str], sid_args: AltamiranoiMainArgs
+    def normalize_user_urls(
+        self, user_urls: list[str], sid_args: AltamiranoiMainArgs
     ) -> list[str]:
         """
-        Normalize the repository URLs list.
+        Normalize the user URLs list.
         """
 
         # Combine all the URLs including those found in the pipeline
-        repository_urls: list[str] = self.add_pipe_urls(
-            repository_urls, sid_args.arg_urls
+        user_urls: list[str] = self.add_pipe_urls(
+            user_urls, sid_args.arg_urls
         )
 
         # Normalize each URL in the list
-        repository_urls: list[str] = [
-            self.normalize_url(url) for url in repository_urls
+        user_urls: list[str] = [
+            self.normalize_url(url) for url in user_urls
         ]
 
         # Remove duplicate URLs
-        repository_urls: list[str] = self.remove_duplicate_urls(repository_urls)
+        user_urls: list[str] = self.remove_duplicate_urls(user_urls)
 
         # Read the filtered_urls_file and store any strings found in the filtered_urls list
         filtered_urls: list[str] = self.read_filtered_urls_file(
@@ -465,11 +465,11 @@ class AltamiranoiMain:
         )
 
         # Filter all the URLs that contain a substring found in filtered_url
-        repository_urls: list[str] = self.filter_repository_urls(
-            repository_urls, filtered_urls
+        user_urls: list[str] = self.filter_repository_urls(
+            user_urls, filtered_urls
         )
 
-        return repository_urls
+        return user_urls
 
     def initialize_forge_dictionary(self) -> dict[str, Any]:
         """
@@ -863,14 +863,14 @@ class AltamiranoiMain:
         # Load the keys.
         self.read_altamiranoi_env_variables(sid_args.env_file)
 
-        # Get each link in the repository URL file
-        repository_urls: list[str] = self.read_repository_url_file(
-            sid_args.repository_url_file
+        # Get each link in the user URL file
+        user_urls: list[str] = self.read_user_url_file(
+            sid_args.user_url_file
         )
 
-        # Normalize the repository URLs list.
-        repository_urls: list[str] = self.normalize_repository_urls(
-            repository_urls, sid_args
+        # Normalize the user URLs list.
+        user_urls: list[str] = self.normalize_user_urls(
+            user_urls, sid_args
         )
 
         # Store each URL in its corresponding file inside sorted_repositories_directory
