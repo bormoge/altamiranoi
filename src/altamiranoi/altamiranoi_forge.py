@@ -8,7 +8,13 @@ class AltamiranoiForge(ABC):
 
     @abstractmethod
     def convert_forge_url_to_api_url(
-        self, repository_url: str, classification_type: int
+        self, user_url: str
+    ) -> str | None:
+        pass
+
+    @abstractmethod
+    def get_forge_user_name(
+        self, user_url: str
     ) -> str | None:
         pass
 
@@ -19,7 +25,7 @@ class AltamiranoiForge(ABC):
         pass
 
     @abstractmethod
-    def normalize_forge_repository_url(self, repository_url: str) -> str:
+    def normalize_forge_user_url(self, user_url: str) -> str:
         pass
 
     @abstractmethod

@@ -383,10 +383,10 @@ class AltamiranoiMain:
 
     def add_pipe_urls(self, user_urls: list[str], arg_urls: str) -> list[str]:
         """
-        Split the URLs found in arg_urls by newline and add them to repository_urls.
+        Split the URLs found in arg_urls by newline and add them to user_urls.
         """
 
-        # Add any URLs found in the pipe to the repository_urls
+        # Add any URLs found in the pipe to the user_urls
         if not arg_urls == "":
             user_urls: list[str] = user_urls + arg_urls.split("\n")
 
@@ -399,7 +399,7 @@ class AltamiranoiMain:
 
         return list(dict.fromkeys(user_urls))
 
-    def filter_repository_urls(
+    def filter_user_urls(
         self, user_urls: list[str], filtered_urls: list[str]
     ) -> list[str]:
         """
@@ -413,15 +413,15 @@ class AltamiranoiMain:
         if len(filtered_urls) == 0:
             return user_urls
 
-        modified_repository_urls: list[str] = [
-            # Put the url in modified_repository_urls...
+        modified_user_urls: list[str] = [
+            # Put the url in modified_user_urls...
             url
             for url in user_urls
             # ...if the url doesn't contain any filtered URL/keyword in it.
             if not any(filtered_url in url for filtered_url in filtered_urls)
         ]
 
-        return modified_repository_urls
+        return modified_user_urls
 
     def normalize_url(self, user_url: str) -> str:
         """
@@ -465,7 +465,7 @@ class AltamiranoiMain:
         )
 
         # Filter all the URLs that contain a substring found in filtered_url
-        user_urls: list[str] = self.filter_repository_urls(
+        user_urls: list[str] = self.filter_user_urls(
             user_urls, filtered_urls
         )
 
@@ -491,13 +491,13 @@ class AltamiranoiMain:
 
         return forge_dict
 
-    def get_repository_url_forge_object(self, forge_dict, repository_url):
+    def get_user_url_forge_object(self, forge_dict, user_url):
         """
         Get the correct forge handler object according to the provided URL's domain.
         """
 
         # Parse the repository URL
-        parsed: Any = urlparse(repository_url)
+        parsed: Any = urlparse(user_url)
         base: str = f"{parsed.scheme}://{parsed.netloc}"
 
         # Loop through each key in forge_dict to compare the base URL
@@ -567,7 +567,7 @@ class AltamiranoiMain:
         url: str,
         language: str,
         current_list_position: int,
-        repository_urls_length: int,
+        user_urls_length: int,
         response: HTTPResponse | HTTPError | None = None,
         forge_name: str = "GitHub",
         verbose: int = 1,
@@ -584,7 +584,7 @@ class AltamiranoiMain:
                 print(f"Skipping {url}")
 
             if verbose >= 2:
-                print(f"Current list position: {current_list_position} out of {repository_urls_length}")
+                print(f"Current list position: {current_list_position} out of {user_urls_length}")
 
             if response is not None and (verbose >= 2):
                 print(
@@ -648,54 +648,50 @@ class AltamiranoiMain:
         except OSError as e:
             sys.exit(f"Error reading {repository_url_file}: {e}")
 
-    def handle_repository_urls(
-        self, repository_urls: list[str], sid_args: AltamiranoiMainArgs
+    def handle_user_urls(
+        self, user_urls: list[str], sid_args: AltamiranoiMainArgs
     ) -> int:
         """
-        Handle each repository URL according to the classification given by the user.
+        Handle each user URL.
         """
 
         forge_dict: dict[str, Any] = self.initialize_forge_dictionary()
-        repository_url_dict: dict[str, list[str]] = {}
+        user_url_dict: dict[str, list[str]] = {}
 
-        repository_urls_length: int = len(repository_urls)
+        user_urls_length: int = len(user_urls)
         current_list_position: int = 0
 
-        # TBC
-        classification_type: int = 1
-        classification_function: Any = self.store_repository_url_by_programming_language
-
         try:
-            for url in repository_urls:
+            for url in user_urls:
 
-                forge_object: AltamiranoiForge = self.get_repository_url_forge_object(
+                forge_object: AltamiranoiForge = self.get_user_url_forge_object(
                     forge_dict, url
                 )
 
-                # If necessary, convert the URL to an API URL.
-                api_url: str | None = forge_object.convert_forge_url_to_api_url(
-                    url, classification_type
+                # Get the user name from the provided URL.
+                user_name: str | None = forge_object.get_forge_user_name(
+                    url
                 )
 
-                if not api_url:
+                if not user_name:
                     current_list_position += 1
                     self.print_altamiranoi_output(
-                        url, "", current_list_position, repository_urls_length, verbose=sid_args.verbose
+                        url, "", current_list_position, user_urls_length, verbose=sid_args.verbose
                     )
                     continue
 
-                # From api_url, fetch the necessary data to get the programming language.
+                # Using user_name, fetch the personal repositories, starred repositories, and, if it's an org, its repositories and the members' personal and starred repositories.
                 response: HTTPResponse | HTTPError | None = (
-                    forge_object.fetch_forge_repository_data(api_url)
+                    forge_object.fetch_forge_repository_data(url, user_name)
                 )
 
-                current_list_position: int = classification_function(
+                current_list_position: int = self.store_user_url(
                     sid_args,
                     forge_object,
                     response,
-                    repository_url_dict,
+                    user_url_dict,
                     current_list_position,
-                    repository_urls_length,
+                    user_urls_length,
                     url,
                     api_url,
                 )
@@ -740,11 +736,11 @@ class AltamiranoiMain:
             print(f"Error: {e}\nSaving URLs.\n")
 
         # Outside of loop.
-        self.write_batches_into_files(repository_url_dict, sid_args)
+        self.write_batches_into_files(user_url_dict, sid_args)
 
         return current_list_position
 
-    def store_repository_url_by_programming_language(
+    def store_user_url(
         self,
         sid_args: AltamiranoiMainArgs,
         forge_object: AltamiranoiForge,
@@ -772,7 +768,7 @@ class AltamiranoiMain:
             sid_args.sorted_repositories_directory, filename
         )
 
-        cleaned_url: str = forge_object.normalize_forge_repository_url(url)
+        cleaned_url: str = forge_object.normalize_forge_user_url(url)
 
         self.store_batches_in_memory(
             full_path_filename, cleaned_url, repository_url_dict
@@ -873,12 +869,12 @@ class AltamiranoiMain:
             user_urls, sid_args
         )
 
-        # Store each URL in its corresponding file inside sorted_repositories_directory
-        final_list_position: int = self.handle_repository_urls(
-            repository_urls, sid_args
+        # Store user_urls in repository_url_file
+        final_list_position: int = self.handle_user_urls(
+            user_urls, sid_args
         )
 
-        # Clear the repository URL file after going through each link
+        # Clear user_url_file after going through each URL
         self.clean_repository_url_file(
             sid_args.repository_url_file, repository_urls, final_list_position
         )

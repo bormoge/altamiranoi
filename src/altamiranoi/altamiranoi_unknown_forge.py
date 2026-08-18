@@ -7,13 +7,29 @@ from .altamiranoi_forge import AltamiranoiForge
 class AltamiranoiUnknownForge(AltamiranoiForge):
 
     def convert_forge_url_to_api_url(
-        self, repository_url: str, classification_type: int
+        self, user_url: str
     ) -> str | None:
         """
         This is a dummy function that returns repository_url.
         """
 
-        return repository_url
+        return user_url
+
+    def get_forge_user_name(
+        self, user_url: str
+    ) -> str | None:
+        """
+        This is a dummy function that returns a dummy user name.
+        """
+
+        parts: list[str] = user_url.strip().split("/")
+
+        if len(parts) < 4:
+            return None
+
+        user: str = parts[3]
+
+        return user
 
     def fetch_forge_repository_data(
         self, api_url: str
@@ -24,11 +40,11 @@ class AltamiranoiUnknownForge(AltamiranoiForge):
 
         return None
 
-    def normalize_forge_repository_url(self, repository_url: str) -> str:
+    def normalize_forge_user_url(self, user_url: str) -> str:
         """
         This is a dummy function that returns repository_url.
         """
-        return repository_url
+        return user_url
 
     def get_repository_programming_language(
         self, api_url: str, response: HTTPResponse | HTTPError | None

@@ -28,59 +28,46 @@ class AltamiranoiGitHub(AltamiranoiForge):
 
         return github_headers
 
-    def get_forge_user_and_repository_name(
-        self, repository_url: str
-    ) -> dict[str, str] | None:
+    def get_forge_user_name(
+        self, user_url: str
+    ) -> str | None:
         """
-        Get the user and repository name from the provided URL.
+        Get the user name from the provided URL.
         """
 
-        parts: list[str] = repository_url.strip().split("/")
+        parts: list[str] = user_url.strip().split("/")
 
-        if len(parts) < 5:
+        if len(parts) < 4:
             return None
 
         user: str = parts[3]
-        repo: str = parts[4]
 
-        return {"user": user, "repo": repo}
+        return user
 
-    def normalize_forge_repository_url(self, repository_url: str) -> str:
+    def normalize_forge_user_url(self, user_url: str) -> str:
         """
         Normalize the provided forge URL, leaving only the base URL, the user, and the repository name.
         """
 
-        user_and_repo: dict[str, str] | None = cast(
-            dict, self.get_forge_user_and_repository_name(repository_url)
-        )
+        user: str | None = self.get_forge_user_name(user_url)
 
-        user: str = user_and_repo["user"]
-        repo: str = user_and_repo["repo"]
-
-        return f"https://github.com/{user}/{repo}"
+        return f"https://github.com/{user}"
 
     def convert_forge_url_to_api_url(
-        self, repository_url: str, classification_type: int
+        self, user_url: str
     ) -> str | None:
         """
         Convert forge URL to forge API URL.
         """
 
-        user_and_repo: dict[str, str] | None = self.get_forge_user_and_repository_name(
-            repository_url
+        user: str | None = self.get_forge_user_name(
+            user_url
         )
 
-        if user_and_repo is None:
+        if user is None:
             return None
 
-        user: str = user_and_repo["user"]
-        repo: str = user_and_repo["repo"]
-
-        match classification_type:
-            case 1:
-                return f"https://api.github.com/repos/{user}/{repo}/languages"
-            case _:
-                return f"https://api.github.com/repos/{user}/{repo}/languages"
+        return f"https://api.github.com/{user}/starred"
 
     def fetch_forge_repository_data(
         self, api_url: str
