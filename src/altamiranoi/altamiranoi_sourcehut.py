@@ -8,18 +8,14 @@ from .altamiranoi_forge import AltamiranoiForge
 
 class AltamiranoiSourceHut(AltamiranoiForge):
 
-    def convert_forge_url_to_api_url(
-        self, user_url: str
-    ) -> str | None:
+    def convert_forge_url_to_api_url(self, user_url: str) -> str | None:
         """
         This is a dummy function that returns repository_url.
         """
 
         return user_url
 
-    def get_forge_user_name(
-        self, user_url: str
-    ) -> str | None:
+    def get_forge_user_name(self, user_url: str) -> str | None:
         """
         This is a dummy function that returns a dummy user name.
         """
@@ -41,6 +37,20 @@ class AltamiranoiSourceHut(AltamiranoiForge):
         """
 
         return None
+
+    def fetch_forge_repositories(
+        self,
+        personal_repos_flag: bool,
+        starred_repos_flag: bool,
+        org_repos_flag: bool,
+        url: str,
+        user_name: str,
+    ) -> list[str]:
+        """
+        This is a dummy function that returns 'url'.
+        """
+
+        return [url]
 
     def normalize_forge_user_url(self, user_url: str) -> str:
         """

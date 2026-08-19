@@ -28,9 +28,7 @@ class AltamiranoiGitHub(AltamiranoiForge):
 
         return github_headers
 
-    def get_forge_user_name(
-        self, user_url: str
-    ) -> str | None:
+    def get_forge_user_name(self, user_url: str) -> str | None:
         """
         Get the user name from the provided URL.
         """
@@ -46,23 +44,19 @@ class AltamiranoiGitHub(AltamiranoiForge):
 
     def normalize_forge_user_url(self, user_url: str) -> str:
         """
-        Normalize the provided forge URL, leaving only the base URL, the user, and the repository name.
+        Normalize the provided forge URL, leaving only the base URL and the user name.
         """
 
         user: str | None = self.get_forge_user_name(user_url)
 
         return f"https://github.com/{user}"
 
-    def convert_forge_url_to_api_url(
-        self, user_url: str
-    ) -> str | None:
+    def convert_forge_url_to_api_url(self, user_url: str) -> str | None:
         """
         Convert forge URL to forge API URL.
         """
 
-        user: str | None = self.get_forge_user_name(
-            user_url
-        )
+        user: str | None = self.get_forge_user_name(user_url)
 
         if user is None:
             return None
@@ -90,6 +84,20 @@ class AltamiranoiGitHub(AltamiranoiForge):
 
         except HTTPError as http_error:
             return http_error
+
+    def fetch_forge_repositories(
+        self,
+        personal_repos_flag: bool,
+        starred_repos_flag: bool,
+        org_repos_flag: bool,
+        url: str,
+        user_name: str,
+    ) -> list[str]:
+        """
+        Fetch a user's repositories and, optionally, starred repositories and a organization's members' repositories.
+        """
+
+        return [url]
 
     def convert_response_to_dict(self, response: HTTPResponse) -> dict:
         """

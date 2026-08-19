@@ -320,10 +320,7 @@ class AltamiranoiMain:
                 config_dict.get("env_file", args_list["env_file"])
             )
 
-        if (
-            args_list["user_url_file"]
-            == altamiranoi_default_args_object.user_url_file
-        ):
+        if args_list["user_url_file"] == altamiranoi_default_args_object.user_url_file:
             args_list["user_url_file"] = os.path.expanduser(
                 config_dict.get("user_url_file", args_list["user_url_file"])
             )
@@ -447,14 +444,10 @@ class AltamiranoiMain:
         """
 
         # Combine all the URLs including those found in the pipeline
-        user_urls: list[str] = self.add_pipe_urls(
-            user_urls, sid_args.arg_urls
-        )
+        user_urls: list[str] = self.add_pipe_urls(user_urls, sid_args.arg_urls)
 
         # Normalize each URL in the list
-        user_urls: list[str] = [
-            self.normalize_url(url) for url in user_urls
-        ]
+        user_urls: list[str] = [self.normalize_url(url) for url in user_urls]
 
         # Remove duplicate URLs
         user_urls: list[str] = self.remove_duplicate_urls(user_urls)
@@ -465,9 +458,7 @@ class AltamiranoiMain:
         )
 
         # Filter all the URLs that contain a substring found in filtered_url
-        user_urls: list[str] = self.filter_user_urls(
-            user_urls, filtered_urls
-        )
+        user_urls: list[str] = self.filter_user_urls(user_urls, filtered_urls)
 
         return user_urls
 
@@ -584,7 +575,9 @@ class AltamiranoiMain:
                 print(f"Skipping {url}")
 
             if verbose >= 2:
-                print(f"Current list position: {current_list_position} out of {user_urls_length}")
+                print(
+                    f"Current list position: {current_list_position} out of {user_urls_length}"
+                )
 
             if response is not None and (verbose >= 2):
                 print(
@@ -661,26 +654,50 @@ class AltamiranoiMain:
         user_urls_length: int = len(user_urls)
         current_list_position: int = 0
 
+        total_repositories: list[str] = []
+
+        # Normalize user URLs and remove duplicate users.
+        try:
+            for i in range(len(user_urls)):
+                forge_object: AltamiranoiForge = self.get_user_url_forge_object(
+                    forge_dict, user_urls[i]
+                )
+
+                user_urls[i] = forge_object.normalize_forge_user_url(user_urls[i])
+
+            user_urls: list[str] = self.remove_duplicate_urls(user_urls)
+
+        except KeyboardInterrupt:
+            print("\naltamiranoi terminated by user.")
+
+        except Exception as e:
+            print(f"Error: {e}\n")
+
         try:
             for url in user_urls:
-
                 forge_object: AltamiranoiForge = self.get_user_url_forge_object(
                     forge_dict, url
                 )
 
                 # Get the user name from the provided URL.
-                user_name: str | None = forge_object.get_forge_user_name(
-                    url
-                )
+                user_name: str | None = forge_object.get_forge_user_name(url)
 
                 if not user_name:
                     current_list_position += 1
                     self.print_altamiranoi_output(
-                        url, "", current_list_position, user_urls_length, verbose=sid_args.verbose
+                        url,
+                        "",
+                        current_list_position,
+                        user_urls_length,
+                        verbose=sid_args.verbose,
                     )
                     continue
 
-                # Using user_name, fetch the personal repositories, starred repositories, and, if it's an org, its repositories and the members' personal and starred repositories.
+                # Fetch the personal repositories, starred repositories, and, if it's an org, its repositories and the members' personal and starred repositories.
+                repositories: list[str] = forge_object.fetch_forge_repositories(True, True, True, url, user_name)
+
+                total_repositories: list[str] = total_repositories + repositories
+
                 response: HTTPResponse | HTTPError | None = (
                     forge_object.fetch_forge_repository_data(url, user_name)
                 )
@@ -860,19 +877,13 @@ class AltamiranoiMain:
         self.read_altamiranoi_env_variables(sid_args.env_file)
 
         # Get each link in the user URL file
-        user_urls: list[str] = self.read_user_url_file(
-            sid_args.user_url_file
-        )
+        user_urls: list[str] = self.read_user_url_file(sid_args.user_url_file)
 
         # Normalize the user URLs list.
-        user_urls: list[str] = self.normalize_user_urls(
-            user_urls, sid_args
-        )
+        user_urls: list[str] = self.normalize_user_urls(user_urls, sid_args)
 
         # Store user_urls in repository_url_file
-        final_list_position: int = self.handle_user_urls(
-            user_urls, sid_args
-        )
+        final_list_position: int = self.handle_user_urls(user_urls, sid_args)
 
         # Clear user_url_file after going through each URL
         self.clean_repository_url_file(

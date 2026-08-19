@@ -40,6 +40,20 @@ class AltamiranoiUnknownForge(AltamiranoiForge):
 
         return None
 
+    def fetch_forge_repositories(
+        self,
+        personal_repos_flag: bool,
+        starred_repos_flag: bool,
+        org_repos_flag: bool,
+        url: str,
+        user_name: str,
+    ) -> list[str]:
+        """
+        This is a dummy function that returns 'url'.
+        """
+
+        return [url]
+
     def normalize_forge_user_url(self, user_url: str) -> str:
         """
         This is a dummy function that returns repository_url.
