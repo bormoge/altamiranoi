@@ -590,20 +590,6 @@ class AltamiranoiMain:
 
             print()
 
-    def clean_programming_language_name(self, language: str) -> str:
-        """
-        Clean the provided programming language name, replacing
-        certain characters with new ones depending of the context.
-        """
-
-        language: str = language.replace(" ", "_")
-        language: str = language.replace(".", "-")
-        language: str = language.replace("'", "-")
-        language: str = language.replace("#", "Sharp")
-        language: str = language.replace("+", "P")
-
-        return language
-
     def check_if_rate_limit_has_been_reached(
         self, response: HTTPResponse | HTTPError, forge_object: AltamiranoiForge
     ) -> bool:
@@ -698,31 +684,20 @@ class AltamiranoiMain:
 
                 total_repositories: list[str] = total_repositories + repositories
 
-                response: HTTPResponse | HTTPError | None = (
-                    forge_object.fetch_forge_repository_data(url, user_name)
-                )
-
                 current_list_position: int = self.store_user_url(
                     sid_args,
                     forge_object,
-                    response,
+                    total_repositories,
                     user_url_dict,
                     current_list_position,
                     user_urls_length,
                     url,
-                    api_url,
                 )
 
-                # This condition activates with all forges,
-                # ignoring any rate limits other than the
-                # current forge's.
-
-                if response is not None and self.check_if_rate_limit_has_been_reached(
-                    response, forge_object
-                ):
+                if forge_object.check_if_rate_limit_has_been_reached():
                     if sid_args.check_at_start_for_rate_limits:
                         self.write_rate_limit_date_file(
-                            response, forge_object.get_forge_name()
+                            forge_object.get_rate_limit_date(), forge_object.get_forge_name()
                         )
                     break
 
@@ -761,34 +736,20 @@ class AltamiranoiMain:
         self,
         sid_args: AltamiranoiMainArgs,
         forge_object: AltamiranoiForge,
-        response: HTTPResponse | HTTPError,
-        repository_url_dict: dict[str, list[str]],
+        total_repositories: list[str],
+        user_url_dict: dict[str, list[str]],
         current_list_position: int,
-        repository_urls_length: int,
+        user_urls_length: int,
         url: str,
-        api_url: str,
     ) -> int:
         """
-        Store each repository URL in the file with the name of its main programming language.
+        Store each repository URL in the file repository_url_file.
         """
-
-        language_name: str = forge_object.get_repository_programming_language(
-            api_url,
-            response,
-        )
-
-        cleaned_language_name: str = self.clean_programming_language_name(language_name)
-
-        filename: str = f"{cleaned_language_name}.{sid_args.file_extension}"
-
-        full_path_filename: str = os.path.join(
-            sid_args.sorted_repositories_directory, filename
-        )
 
         cleaned_url: str = forge_object.normalize_forge_user_url(url)
 
         self.store_batches_in_memory(
-            full_path_filename, cleaned_url, repository_url_dict
+            full_path_filename, cleaned_url, user_url_dict
         )
 
         current_list_position += 1
@@ -797,7 +758,7 @@ class AltamiranoiMain:
             cleaned_url,
             cleaned_language_name,
             current_list_position,
-            repository_urls_length,
+            user_urls_length,
             response,
             forge_object.get_forge_name(),
             verbose=sid_args.verbose,

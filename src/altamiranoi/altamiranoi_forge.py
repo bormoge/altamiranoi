@@ -36,12 +36,6 @@ class AltamiranoiForge(ABC):
         pass
 
     @abstractmethod
-    def get_repository_programming_language(
-        self, api_url: str, response: HTTPResponse | HTTPError | None
-    ) -> str | Any:
-        pass
-
-    @abstractmethod
     def get_forge_name(self) -> str:
         pass
 

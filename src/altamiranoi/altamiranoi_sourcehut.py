@@ -62,15 +62,6 @@ class AltamiranoiSourceHut(AltamiranoiForge):
 
         return f"https://{base_url}/{user}"
 
-    def get_repository_programming_language(
-        self, api_url: str, response: HTTPResponse | HTTPError | None
-    ) -> str | Any:
-        """
-        This is a dummy function that returns 'SourceHut'
-        """
-
-        return "SourceHut"
-
     def get_forge_name(self) -> str:
         """
         This is a dummy function that returns "SourceHut".

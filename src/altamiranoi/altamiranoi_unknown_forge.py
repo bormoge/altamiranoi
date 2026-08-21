@@ -60,15 +60,6 @@ class AltamiranoiUnknownForge(AltamiranoiForge):
         """
         return user_url
 
-    def get_repository_programming_language(
-        self, api_url: str, response: HTTPResponse | HTTPError | None
-    ) -> str | Any:
-        """
-        This is a dummy function that returns 'Unknown'
-        """
-
-        return "Unknown"
-
     def get_forge_name(self) -> str:
         """
         This is a dummy function that returns "Unknown".
