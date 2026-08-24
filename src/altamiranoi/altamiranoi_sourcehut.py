@@ -52,6 +52,33 @@ class AltamiranoiSourceHut(AltamiranoiForge):
 
         return [url]
 
+    def check_if_rate_limit_has_been_reached(
+        self,
+    ) -> bool:
+        """
+        This is a dummy function that returns False.
+        """
+
+        return False
+
+    def get_rate_limit_date(
+        self,
+    ) -> int:
+        """
+        This is a dummy function that returns -1.
+        """
+
+        return -1
+
+    def set_rate_limit_date(
+        self,
+    ) -> int:
+        """
+        This is a dummy function that returns -1.
+        """
+
+        return -1
+
     def normalize_forge_user_url(self, user_url: str) -> str:
         """
         Normalize the provided forge URL, leaving only the base URL, the user, and the repository name.

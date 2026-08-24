@@ -32,6 +32,24 @@ class AltamiranoiForge(ABC):
         pass
 
     @abstractmethod
+    def check_if_rate_limit_has_been_reached(
+        self,
+    ) -> bool:
+        pass
+
+    @abstractmethod
+    def get_rate_limit_date(
+        self,
+    ) -> int:
+        pass
+
+    @abstractmethod
+    def set_rate_limit_date(
+        self,
+    ) -> int:
+        pass
+
+    @abstractmethod
     def normalize_forge_user_url(self, user_url: str) -> str:
         pass
 

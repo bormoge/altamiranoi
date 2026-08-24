@@ -99,6 +99,33 @@ class AltamiranoiGitHub(AltamiranoiForge):
 
         return [url]
 
+    def check_if_rate_limit_has_been_reached(
+        self,
+    ) -> bool:
+        """
+        Check if the rate limit for the GitHub API has been reached.
+        """
+
+        return False
+
+    def get_rate_limit_date(
+        self,
+    ) -> int:
+        """
+        Get the GitHub API rate limit.
+        """
+
+        return -1
+
+    def set_rate_limit_date(
+        self,
+    ) -> int:
+        """
+        Set the GitHub API rate limit as a variable.
+        """
+
+        return -1
+
     def convert_response_to_dict(self, response: HTTPResponse) -> dict:
         """
         Convert an HTTP response into a dictionary.
@@ -107,31 +134,6 @@ class AltamiranoiGitHub(AltamiranoiForge):
         response_dict: dict = json.loads(response_bytes.decode("utf-8"))
 
         return response_dict
-
-    def get_repository_programming_language(
-        self, api_url: str, response: HTTPResponse | HTTPError | None
-    ) -> str | Any:
-        """
-        Get the main programming language of the provided repository URL.
-        """
-
-        # Check if response exists. If it doesn't, it means we know it's a GitHub
-        # URL but it's not a repository.
-        if response is None or isinstance(response, HTTPError):
-            return "GitHub_URL"
-
-        # Generate a dictionary using the response object.
-        response_dict: dict = self.convert_response_to_dict(response)
-
-        # If the dictionary generated is empty then we know there are no
-        # programming languages in that repository.
-        if (len(response_dict) == 0) or (response_dict == {}):
-            return "No_Programming_Language"
-
-        # Get the most used language in the repository.
-        main_language: str | Any = max(response_dict, key=lambda k: response_dict[k])
-
-        return main_language
 
     def get_forge_name(self) -> str:
         """
