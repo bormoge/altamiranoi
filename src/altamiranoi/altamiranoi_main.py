@@ -179,7 +179,7 @@ class AltamiranoiMain:
             if value != []:
                 if sid_args.verbose >= 3:
                     print(
-                        f"Adding the following URLs to file \033[32m{os.path.basename(key)}\033[0m:"
+                        f"Adding the following URLs to file {os.path.basename(key)}:"
                     )
                     print(value)
                     print()
@@ -529,7 +529,7 @@ class AltamiranoiMain:
 
         except FileNotFoundError:
             if sid_args.verbose >= 3:
-                print(f"File \033[32m{key}\033[0m not found. Creating it.\n")
+                print(f"File {key} not found. Creating it.\n")
 
             existing_urls: set[str] = set()
 
@@ -569,7 +569,7 @@ class AltamiranoiMain:
 
         if verbose >= 1:
             if language:
-                print(f"URL: \033[34m{url}\033[0m")
+                print(f"URL: {url}")
                 print(f"Programming Language: {language}")
             else:
                 print(f"Skipping {url}")

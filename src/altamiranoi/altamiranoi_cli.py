@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 import sys
 import time
@@ -9,7 +10,7 @@ from .altamiranoi_main import AltamiranoiMain
 
 
 def main() -> None:
-    start_time: float = time.perf_counter()
+    start_time: float = time.time()
 
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
         prog="altamiranoi",
@@ -119,9 +120,9 @@ def main() -> None:
     except KeyboardInterrupt:
         sys.exit("\naltamiranoi terminated by user.")
 
-    end_time: float = time.perf_counter()
+    finish_time: float = time.time()
 
-    print_time_elapsed(start_time, end_time)
+    print_time_elapsed(start_time, finish_time)
 
 
 def get_all_urls_from_pipes_and_urls_arg(args) -> str:
@@ -136,10 +137,12 @@ def get_all_urls_from_pipes_and_urls_arg(args) -> str:
     return arg_urls
 
 
-def print_time_elapsed(start_time: float, end_time: float) -> None:
-    time_elapsed: float = end_time - start_time
+def print_time_elapsed(start_time: float, finish_time: float) -> None:
+    time_elapsed: float = finish_time - start_time
 
     print("altamiranoi finished")
+    print(f"Start date: {datetime.datetime.fromtimestamp(start_time).replace(microsecond=0)}")
+    print(f"Finish date: {datetime.datetime.fromtimestamp(finish_time).replace(microsecond=0)}")
     print(f"Approximate time elapsed: {time_elapsed:.6f} seconds")
 
 
