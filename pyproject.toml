@@ -63,4 +63,4 @@ packages = ["src/altamiranoi"]
 
 [tool.uv]
 exclude-newer = "2 weeks"
-exclude-newer-package = { altamiranoi = false }
+exclude-newer-package = { altamiranoi = false, certifi = false }
